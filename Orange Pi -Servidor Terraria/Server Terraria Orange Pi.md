@@ -65,30 +65,29 @@ Eso es todo.
   - Copiar pscp.exe a C:\WIndows\system32\
   - Iniciar PowerShell
 
-		'pscp 'C:\Coop.wld' root@192.168.0.114:/home/carly/.local/share/Terraria/Worlds'
+		'pscp 'C:\Coop.wld' root@192.168.0.114:/home/terraria/.local/share/Terraria/Worlds'
 
 - **Comando de Servidor**
 
-		...
 		-maxplayers 8
 		-port 7778
 
-		...
 
 - **Ubicaciones de los mundos según sistemas**
 
-		...
-		**En WIndows:** "C:\Users\[your name]\Documents\My Games\terraria\Worlds"
-		**En Mac:** "~/Library/Application Support/terraria/Worlds"
-		**En Linux:** "~/.local/share/Terraria/Worlds"
-		...
+	**En WIndows:** "C:\Users\[your name]\Documents\My Games\terraria\Worlds"
+	**En Mac:** "~/Library/Application Support/terraria/Worlds"
+	**En Linux:** "~/.local/share/Terraria/Worlds"
+
 
 
 - **Fuentes de datos**
 
-		...
-		Manual TShock: https://tshock.readme.io/v4.3.22/docs/config-settings
-		Usando GNU SCREEN: https://phenobarbital.wordpress.com/2013/02/18/linux-usando-gnu-screen/
-		Ubicaciones de archivos: http://www.jugonestop.com/pregunta/9371/donde-estan-mis-archivos-de-mundo
-		Montar TShock en Linux: https://tshock.co/xf/index.php?threads/guide-how-to-host-tshock-on-linux.4798/
-		...
+	Manual TShock: https://tshock.readme.io/v4.3.22/docs/config-settings
+	Usando GNU SCREEN: https://phenobarbital.wordpress.com/2013/02/18/linux-usando-gnu-screen/
+	Ubicaciones de archivos: http://www.jugonestop.com/pregunta/9371/donde-estan-mis-archivos-de-mundo
+	Montar TShock en Linux: https://tshock.co/xf/index.php?threads/guide-how-to-host-tshock-on-linux.4798/
+
+
+
+..
