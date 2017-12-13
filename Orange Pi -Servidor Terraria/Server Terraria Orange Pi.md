@@ -17,7 +17,7 @@
 
 4. Ir al directorio 'Home':
 
-		cd ~ (la bilirgülilla en terminal linux sale con F5) 
+		cd ~ (la bilirgulilla en terminal linux sale con F5) 
 
 5. Descargar la última versión de del servidor TShock en [link](https://github.com/NyxStudios/TShock/releases/)
 Por ejemplo:
@@ -54,9 +54,9 @@ Por ejemplo:
 
 
 Eso es todo.
-
-
-
+ 
+ 
+ 
 ## Notas Adicionales:
 
 - **Copiar mundo desde Windows hacia Linux usando PSCP.exe (Herramienta de Putty)**
@@ -80,9 +80,9 @@ Eso es todo.
 	**En Mac:** "~/Library/Application Support/terraria/Worlds"
 	
 	**En Linux:** "~/.local/share/Terraria/Worlds"
-
-
-
+ 
+ 
+ 
 - **Fuentes de datos**
 
 	Manual TShock: https://tshock.readme.io/v4.3.22/docs/config-settings
