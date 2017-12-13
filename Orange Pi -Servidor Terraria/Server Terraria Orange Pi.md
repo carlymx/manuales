@@ -5,57 +5,59 @@
 
 1. Crear un nuevo Usuario:
 
-		'adduser terraria'
+		adduser terraria
 
 2. Instalar programas 'Mono, Screen y unZip':
 
-		'sudo apt-get install mono-complete screen zip unzip'
+		sudo apt-get install mono-complete screen zip unzip
 
 3. Usar Usuario nuevo:
 
- 'su terraria'
+		su terraria
 
 4. Ir al directorio 'Home':
 
-		'cd '
+		cd ~ (la bilirgülilla en terminal linux sale con F5) 
 
 5. Descargar la última versión de del servidor TShock en [link](https://github.com/NyxStudios/TShock/releases/)
 Por ejemplo:
 
-		'wget https://github.com/Pryaxis/TShock/releases/download/v4.3.25/tshock_4.3.25.zip'
+		wget https://github.com/Pryaxis/TShock/releases/download/v4.3.25/tshock_4.3.25.zip
 
 6. Descomprimir en un nuevo directorio el contenido del zip:
 
-		'unzip tshock_4.3.25.zip -d ./server'
+		unzip tshock_4.3.25.zip -d ./server
 
 7. Iniciar por primera vez el Servidor y crear un mapa:
 
-		'mono-sgen TerrariaServer.exe
+		mono-sgen TerrariaServer.exe
 		(despúes cerrar el servidor con el comando)
-		exit'
+		exit
 
 8. Crear un archivo de texto ejecutable del tipo ".sh"
 
-		'touch Iniciar_Server.sh && chmod +x Iniciar_Server.sh'
+		touch Iniciar_Server.sh && chmod +x Iniciar_Server.sh
 
 9. Editar el archivo e incluir las instrucciones de arranque de nuestro servidor:
 
-		'sudo nano Iniciar_Server.sh'
-		'
+		sudo nano Iniciar_Server.sh
+
 		#!/bin/bash
 		screen -S server -A -m \
 			mono-sgen TerrariaServer.exe \
 			-world "/home/terraria/.local/share/Terraria/Worlds/mundo1.wld" \
-		'
 
+			
 10. Luego solo queda iniciar el servidor accediendo al archivo desde cualquier lugar:
 
-		'./Iniciar_Server.sh'
+		./Iniciar_Server.sh
 
 
 Eso es todo.
 
 
+
+## Notas Adicionales:
 
 - **Copiar mundo desde Windows hacia Linux usando PSCP.exe (Herramienta de Putty)**
 
