@@ -75,8 +75,10 @@ Eso es todo.
 
 - **Ubicaciones de los mundos según sistemas**
 
-	**En WIndows:** "C:\Users\[your name]\Documents\My Games\terraria\Worlds"
+	**En WIndows:** "C:\Users\your name\Documents\My Games\terraria\Worlds"
+	
 	**En Mac:** "~/Library/Application Support/terraria/Worlds"
+	
 	**En Linux:** "~/.local/share/Terraria/Worlds"
 
 
@@ -84,8 +86,11 @@ Eso es todo.
 - **Fuentes de datos**
 
 	Manual TShock: https://tshock.readme.io/v4.3.22/docs/config-settings
+	
 	Usando GNU SCREEN: https://phenobarbital.wordpress.com/2013/02/18/linux-usando-gnu-screen/
+	
 	Ubicaciones de archivos: http://www.jugonestop.com/pregunta/9371/donde-estan-mis-archivos-de-mundo
+	
 	Montar TShock en Linux: https://tshock.co/xf/index.php?threads/guide-how-to-host-tshock-on-linux.4798/
 
 
