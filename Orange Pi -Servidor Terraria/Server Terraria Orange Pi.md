@@ -17,7 +17,7 @@
 
 4. Ir al directorio 'Home':
 
-		cd ~ (la bilirgulilla en terminal linux sale con F5) 
+		cd ~ (la virgulilla en terminal linux sale con F5) 
 
 5. Descargar la última versión de del servidor TShock en [link](https://github.com/NyxStudios/TShock/releases/)
 Por ejemplo:
