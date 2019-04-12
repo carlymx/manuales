@@ -26,7 +26,7 @@ Por ejemplo:
 
 6. Descomprimir en un nuevo directorio el contenido del zip:
 
-		unzip tshock_4.3.25.zip -d ./server
+		unzip tshock_4.3.26.zip -d ./server
 
 7. Iniciar por primera vez el Servidor y crear un mapa:
 
