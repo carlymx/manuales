@@ -8,9 +8,9 @@
 		adduser terraria
 		sudo visudo
 			**Al final del archivo añadir:**
-			```# Super Usuarios
+			´´´# Super Usuarios
 			root    ALL=(ALL:ALL) ALL
-			terraria    ALL=(ALL:ALL) ALL```
+			terraria    ALL=(ALL:ALL) ALL´´´
 
 2. Instalar programas 'Mono, Screen y unZip':
 
