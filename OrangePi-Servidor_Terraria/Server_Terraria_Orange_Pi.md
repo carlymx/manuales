@@ -6,13 +6,13 @@
 1. Crear un nuevo Usuario y darle privilegios:
 
 		adduser terraria
+		
 		sudo visudo
+		
 			**Al final del archivo añadir:**
-```
-# Super Usuarios
-root    ALL=(ALL:ALL) ALL
-terraria    ALL=(ALL:ALL) ALL
-```
+			# Super Usuarios
+			root    ALL=(ALL:ALL) ALL
+			terraria    ALL=(ALL:ALL) ALL
 
 2. Instalar programas 'Mono, Screen y unZip':
 
@@ -50,7 +50,7 @@ Por ejemplo:
 		sudo nano Iniciar_Server.sh
 
 		#!/bin/bash
-		screen -S server -A -m \
+		sudo screen -S server -A -m \
 			mono-sgen TerrariaServer.exe \
 			-world "/home/terraria/.local/share/Terraria/Worlds/mundo1.wld" \
 
