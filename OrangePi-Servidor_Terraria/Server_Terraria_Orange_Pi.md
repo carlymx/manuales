@@ -22,7 +22,7 @@
 5. Descargar la última versión de del servidor TShock en [link](https://github.com/NyxStudios/TShock/releases/)
 Por ejemplo:
 
-		wget https://github.com/Pryaxis/TShock/releases/download/v4.3.25/tshock_4.3.25.zip
+		wget https://github.com/Pryaxis/TShock/releases/download/v4.3.26/tshock_4.3.26.zip
 
 6. Descomprimir en un nuevo directorio el contenido del zip:
 
