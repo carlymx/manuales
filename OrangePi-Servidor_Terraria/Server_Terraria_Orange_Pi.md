@@ -3,9 +3,14 @@
 
 ## Instalación del SERVIDOR
 
-1. Crear un nuevo Usuario:
+1. Crear un nuevo Usuario y darle privilegios:
 
 		adduser terraria
+		sudo visudo
+			**Al final del archivo añadir:**
+			```# Super Usuarios
+			root    ALL=(ALL:ALL) ALL
+			terraria    ALL=(ALL:ALL) ALL```
 
 2. Instalar programas 'Mono, Screen y unZip':
 
