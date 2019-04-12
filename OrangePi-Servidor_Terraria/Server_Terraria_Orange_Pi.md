@@ -65,7 +65,8 @@ Eso es todo.
   - Copiar pscp.exe a C:\WIndows\system32\
   - Iniciar PowerShell
 
-		'pscp 'C:\Coop.wld' root@192.168.0.114:/home/terraria/.local/share/Terraria/Worlds'
+	**Ejemplo de codigo**
+		'pscp 'C:\Tu_Mapa.wld' root@192.168.0.xxx:/home/terraria/.local/share/Terraria/Worlds'
 
 - **Comando de Servidor**
 
@@ -76,6 +77,7 @@ Eso es todo.
 - **Ubicaciones de los mundos según sistemas**
 
 	**En WIndows:** "C:\Users\your name\Documents\My Games\terraria\Worlds"
+	**STEAM por defecto:** "C:\Program Files (x86)\Steam\userdata\TU_ID\105600\remote\worlds"
 	
 	**En Mac:** "~/Library/Application Support/terraria/Worlds"
 	
