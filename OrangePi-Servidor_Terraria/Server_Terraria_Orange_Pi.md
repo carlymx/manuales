@@ -37,9 +37,15 @@ Por ejemplo:
 
 7. Iniciar por primera vez el Servidor y crear un mapa:
 
-		mono-sgen TerrariaServer.exe
-		(despúes cerrar el servidor con el comando)
-		exit
+	7.1 Ejecutar el servidor:  
+	
+		mono-sgen TerrariaServer.exe  
+	
+	7.2 Crear un mapa siguiendo el asistente.  
+	7.3 Iniciar el mapa creado por primera vez.  
+	7.4 Despúes cerrar el servidor con el comando  
+	
+			exit
 
 8. Crear un archivo de texto ejecutable del tipo ".sh"
 
