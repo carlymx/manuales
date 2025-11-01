@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentación Linux - Inicio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Documentación Linux</div>
+      <nav class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="basic_setup.html">Básico</a>
+        <a href="advanced_config.html">Avanzado</a>
+        <a href="troubleshooting.html">Solución de Problemas</a>
+        <a href="terraria_server.html">Servidor Terraria</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Secciones</h3>
+      <ul>
+        <li><a href="#introduction">Introducción</a></li>
+        <li><a href="#basic-configuration">Configuración Básica</a></li>
+        <li><a href="#advanced-configuration">Configuración Avanzada</a></li>
+        <li><a href="#troubleshooting">Solución de Problemas</a></li>
+        <li><a href="#additional-tips">Consejos Adicionales</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Documentación de Linux - Guía Completa</h1>
+      
+      <section id="introduction">
+        <h2>Introducción</h2>
+        <p>Bienvenido a la documentación de Linux, una recopilación organizada de consejos, configuraciones y soluciones a problemas comunes que pueden surgir al usar sistemas Linux, especialmente distribuciones basadas en Ubuntu como Linux Mint.</p>
+        
+        <p>Esta documentación está estructurada en varias secciones que cubren desde las configuraciones básicas después de instalar el sistema, hasta soluciones para problemas más complejos relacionados con hardware, virtualización, y sistemas de archivos.</p>
+        
+        <p>Todo el contenido ha sido recopilado de experiencias reales y ha sido generalizado para eliminar información sensible como nombres de usuarios, contraseñas o direcciones específicas.</p>
+      </section>
+      
+      <section id="basic-configuration">
+        <h2>Configuración Básica</h2>
+        <p>La sección de <a href="basic_setup.html">Configuración Básica</a> cubre los pasos esenciales que se recomiendan realizar justo después de instalar Linux Mint:</p>
+        
+        <ul>
+          <li><strong>Personalizar GRUB:</strong> Cómo usar GRUB Customizer para personalizar el menú de arranque</li>
+          <li><strong>Configurar Escritorio Remoto:</strong> Instalación y configuración de XRDP para acceso remoto</li>
+          <li><strong>Poner a Punto Arduino IDE:</strong> Cómo configurar los permisos adecuados para usar Arduino sin problemas</li>
+          <li><strong>Instalar PyQt5:</strong> Configuración para desarrollo de interfaces gráficas en Python</li>
+          <li><strong>Soporte NTFS:</strong> Configuración para montar particiones NTFS y resolver problemas comunes</li>
+        </ul>
+        
+        <p>Estos pasos ayudan a personalizar tu entorno y mejorar la funcionalidad del sistema.</p>
+      </section>
+      
+      <section id="advanced-configuration">
+        <h2>Configuración Avanzada</h2>
+        <p>La sección de <a href="advanced_config.html">Configuración Avanzada</a> aborda temas más complejos para optimizar el rendimiento y funcionalidad del sistema:</p>
+        
+        <ul>
+          <li><strong>Consejos de Rendimiento:</strong> Cómo montar carpetas temporales en RAM y configurar TRIM para discos SSD</li>
+          <li><strong>Configuración de Swap:</strong> Cómo cambiar el tamaño del archivo de intercambio</li>
+          <li><strong>Reparar GRUB:</strong> Cómo reparar el cargador de arranque si falla</li>
+          <li><strong>Activar Hibernación:</strong> Configuración detallada para habilitar la hibernación en Linux</li>
+          <li><strong>Actualizar Kernel:</strong> Cómo instalar versiones más recientes del kernel</li>
+          <li><strong>Optimización del Sistema:</strong> Otros consejos para mejorar el rendimiento del sistema</li>
+        </ul>
+        
+        <p>Estas configuraciones son recomendadas para usuarios con más experiencia que desean optimizar al máximo su sistema Linux.</p>
+      </section>
+      
+      <section id="troubleshooting">
+        <h2>Solución de Problemas</h2>
+        <p>La sección de <a href="troubleshooting.html">Solución de Problemas</a> proporciona soluciones a problemas comunes:</p>
+        
+        <ul>
+          <li><strong>Problemas con USB:</strong> Cómo resolver problemas donde solo funciona USB2 o USB3, pero no ambos simultáneamente</li>
+          <li><strong>Problemas con IOMMU:</strong> Solución de problemas relacionados con IOMMU en procesadores AMD Ryzen</li>
+          <li><strong>Reiniciar Cinnamon:</strong> Cómo reiniciar el entorno de escritorio Cinnamon cuando se cuelga</li>
+          <li><strong>Compartir Redes y NFS:</strong> Cómo crear directorios compartidos con NFS</li>
+          <li><strong>Problemas de Montaje:</strong> Cómo montar unidades de red (SMB/CIFS)</li>
+          <li><strong>Accesos Directos de Escritorio:</strong> Cómo crear accesos directos personalizados en el menú de inicio</li>
+        </ul>
+        
+        <p>Estas soluciones están basadas en problemas reales experimentados por usuarios y han sido probadas en sistemas Linux reales.</p>
+      </section>
+      
+      <section id="terraria-server">
+        <h2>Configuración de Servidor Terraria en Orange Pi</h2>
+        <p>La sección de <a href="terraria_server.html">Servidor Terraria</a> cubre cómo configurar un servidor de Terraria con TShock en una Orange Pi:</p>
+        
+        <ul>
+          <li><strong>Instalación del Servidor:</strong> Creación de usuario dedicado y configuración de dependencias</li>
+          <li><strong>Configuración del Servidor:</strong> Creación de scripts de inicio y parámetros del servidor</li>
+          <li><strong>Comandos del Servidor:</strong> Administración y control del servidor en ejecución</li>
+          <li><strong>Transferencia de Mundos:</strong> Cómo mover mundos entre diferentes sistemas operativos</li>
+        </ul>
+        
+        <p>Esta configuración permite alojar un servidor de Terraria de forma eficiente en hardware ARM como las placas Orange Pi.</p>
+      </section>
+      
+      <section id="additional-tips">
+        <h2>Consejos Adicionales</h2>
+        
+        <h3>Seguridad y Buenas Prácticas</h3>
+        <ul>
+          <li>Cuando uses comandos que requieran permisos de superusuario, hazlo con precaución</li>
+          <li>Mantén tu sistema actualizado regularmente</li>
+          <li>Realiza copias de seguridad periódicas de tus configuraciones importantes</li>
+          <li>Evita instalar software de fuentes no confiables</li>
+        </ul>
+        
+        <h3>Recursos Adicionales</h3>
+        <ul>
+          <li>Documentación oficial de tu distribución Linux</li>
+          <li>Foros comunitarios (como Linux Mint Forums)</li>
+          <li>Manuales del sistema (accesibles con el comando <code>man</code>)</li>
+          <li>Registros del sistema (disponibles en <code>/var/log</code>)</li>
+        </ul>
+        
+        <h3>Contribuir a Esta Documentación</h3>
+        <p>Esta documentación está en constante evolución. Si tienes soluciones a problemas no cubiertos aquí o mejoras para las soluciones existentes, considera agregarlas a tu colección personal de documentación.</p>
+        
+        <p>Si encuentras errores o tienes sugerencias de mejora, puedes actualizar los archivos HTML directamente o crear entradas adicionales para la documentación.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux Documentation - Home</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Linux Documentation</div>
+      <nav class="nav-links">
+        <a href="index_en.html">Home</a>
+        <a href="basic_setup_en.html">Basic</a>
+        <a href="advanced_config_en.html">Advanced</a>
+        <a href="troubleshooting_en.html">Troubleshooting</a>
+        <a href="terraria_server_en.html">Terraria Server</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Sections</h3>
+      <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#basic-configuration">Basic Configuration</a></li>
+        <li><a href="#advanced-configuration">Advanced Configuration</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#additional-tips">Additional Tips</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Linux Documentation - Complete Guide</h1>
+      
+      <section id="introduction">
+        <h2>Introduction</h2>
+        <p>Welcome to the Linux documentation, an organized collection of tips, configurations, and solutions to common problems that may arise when using Linux systems, especially Ubuntu-based distributions like Linux Mint.</p>
+        
+        <p>This documentation is structured into several sections covering everything from basic configurations after installing the system, to solutions for more complex problems related to hardware, virtualization, and file systems.</p>
+        
+        <p>All content has been collected from real experiences and has been generalized to remove sensitive information such as usernames, passwords, or specific addresses.</p>
+      </section>
+      
+      <section id="basic-configuration">
+        <h2>Basic Configuration</h2>
+        <p>The <a href="basic_setup_en.html">Basic Configuration</a> section covers essential steps recommended immediately after installing Linux Mint:</p>
+        
+        <ul>
+          <li><strong>Customize GRUB:</strong> How to use GRUB Customizer to customize the boot menu</li>
+          <li><strong>Configure Remote Desktop:</strong> Installation and configuration of XRDP for remote access</li>
+          <li><strong>Set Up Arduino IDE:</strong> How to configure proper permissions to use Arduino without issues</li>
+          <li><strong>Install PyQt5:</strong> Configuration for GUI development in Python</li>
+          <li><strong>NTFS Support:</strong> Configuration to mount NTFS partitions and resolve common issues</li>
+        </ul>
+        
+        <p>These steps help customize your environment and improve system functionality.</p>
+      </section>
+      
+      <section id="advanced-configuration">
+        <h2>Advanced Configuration</h2>
+        <p>The <a href="advanced_config_en.html">Advanced Configuration</a> section addresses more complex topics for optimizing system performance and functionality:</p>
+        
+        <ul>
+          <li><strong>Performance Tips:</strong> How to mount temporary folders in RAM and configure TRIM for SSDs</li>
+          <li><strong>Swap Configuration:</strong> How to change the swap file size</li>
+          <li><strong>Repair GRUB:</strong> How to repair the boot loader if it fails</li>
+          <li><strong>Enable Hibernation:</strong> Detailed configuration to enable hibernation in Linux</li>
+          <li><strong>Update Kernel:</strong> How to install newer kernel versions</li>
+          <li><strong>System Optimization:</strong> Other tips to improve Linux system performance</li>
+        </ul>
+        
+        <p>These configurations are recommended for more experienced users who want to maximize their Linux system.</p>
+      </section>
+      
+      <section id="troubleshooting">
+        <h2>Troubleshooting</h2>
+        <p>The <a href="troubleshooting_en.html">Troubleshooting</a> section provides solutions to common problems:</p>
+        
+        <ul>
+          <li><strong>USB Issues:</strong> How to resolve problems where only USB2 or USB3 works, but not both simultaneously</li>
+          <li><strong>IOMMU Issues:</strong> Troubleshooting problems related to IOMMU in AMD Ryzen processors</li>
+          <li><strong>Restart Cinnamon:</strong> How to restart the Cinnamon desktop environment when it hangs</li>
+          <li><strong>Network Shares and NFS:</strong> How to create shared directories with NFS</li>
+          <li><strong>Mount Issues:</strong> How to mount network drives (SMB/CIFS)</li>
+          <li><strong>Desktop Shortcuts:</strong> How to create custom shortcuts in the start menu</li>
+        </ul>
+        
+        <p>These solutions are based on real problems experienced by users and have been tested on real Linux systems.</p>
+      </section>
+      
+      <section id="terraria-server">
+        <h2>Setting Up Terraria Server on Orange Pi</h2>
+        <p>The <a href="terraria_server_en.html">Terraria Server</a> section covers how to configure a Terraria server with TShock on an Orange Pi:</p>
+        
+        <ul>
+          <li><strong>Server Installation:</strong> Creating dedicated user and configuring dependencies</li>
+          <li><strong>Server Configuration:</strong> Creating startup scripts and server parameters</li>
+          <li><strong>Server Commands:</strong> Managing and controlling the running server</li>
+          <li><strong>World Transfer:</strong> How to move worlds between different operating systems</li>
+        </ul>
+        
+        <p>This setup allows efficiently hosting a Terraria server on ARM hardware like Orange Pi boards.</p>
+      </section>
+      
+      <section id="additional-tips">
+        <h2>Additional Tips</h2>
+        
+        <h3>Security and Best Practices</h3>
+        <ul>
+          <li>When using commands requiring superuser permissions, do so with caution</li>
+          <li>Keep your system updated regularly</li>
+          <li>Perform periodic backups of your important configurations</li>
+          <li>Avoid installing software from untrustworthy sources</li>
+        </ul>
+        
+        <h3>Additional Resources</h3>
+        <ul>
+          <li>Official documentation of your Linux distribution</li>
+          <li>Community forums (such as Linux Mint Forums)</li>
+          <li>System manuals (accessible with the <code>man</code> command)</li>
+          <li>System logs (available in <code>/var/log</code>)</li>
+        </ul>
+        
+        <h3>Contributing to This Documentation</h3>
+        <p>This documentation is constantly evolving. If you have solutions to problems not covered here or improvements to existing solutions, consider adding them to your personal documentation collection.</p>
+        
+        <p>If you find errors or have improvement suggestions, you can update the HTML files directly or create additional entries for the documentation.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

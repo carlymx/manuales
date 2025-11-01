@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solución de Problemas - Documentación Linux</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Documentación Linux</div>
+      <nav class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="basic_setup.html">Básico</a>
+        <a href="advanced_config.html">Avanzado</a>
+        <a href="troubleshooting.html">Solución de Problemas</a>
+        <a href="terraria_server.html">Servidor Terraria</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Secciones</h3>
+      <ul>
+        <li><a href="#usb-issues">Problemas con USB</a></li>
+        <li><a href="#iommu-fixes">Problemas con IOMMU</a></li>
+        <li><a href="#cinnamon-restart">Reiniciar Cinnamon</a></li>
+        <li><a href="#network-shares">Compartir Redes y NFS</a></li>
+        <li><a href="#mount-issues">Problemas de Montaje</a></li>
+        <li><a href="#desktop-shortcuts">Accesos Directos de Escritorio</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Solución de Problemas Comunes en Linux</h1>
+      
+      <section id="usb-issues">
+        <h2>Problemas con USB: USB2 o USB3, pero no ambos a la vez</h2>
+        
+        <h3>Descripción del Problema</h3>
+        <p>En algunos sistemas, especialmente con hardware más antiguo o con configuraciones específicas de la BIOS, puede ocurrir que los puertos USB2 funcionen correctamente o los puertos USB3 funcionen correctamente, pero no ambos simultáneamente. Este problema puede manifestarse como puertos USB que dejan de responder o dispositivos que no se reconocen correctamente.</p>
+        
+        <h3>Causas Probables</h3>
+        <ul>
+          <li>Problemas con el controlador USB en el kernel</li>
+          <li>Configuración incorrecta de energía USB en la BIOS</li>
+          <li>Conflicto de controladores o recursos</li>
+          <li>Hardware USB con problemas de compatibilidad</li>
+        </ul>
+        
+        <h3>Solución</h3>
+        <p>En lugar de un procedimiento general, la solución depende del hardware específico y la distribución. Se recomienda:</p>
+        <ol>
+          <li>Verificar actualizaciones del kernel y controladores</li>
+          <li>Actualizar la BIOS al último firmware disponible</li>
+          <li>Probar diferentes puertos USB y dispositivos</li>
+          <li>Revisar los registros del sistema: <code>dmesg | grep -i usb</code></li>
+        </ol>
+      </section>
+      
+      <section id="iommu-fixes">
+        <h2>Problemas con IOMMU en Procesadores AMD Ryzen</h2>
+        
+        <h3>Descripción del Problema</h3>
+        <p>Los problemas de IOMMU (Input-Output Memory Management Unit) en procesadores AMD Ryzen pueden manifestarse como dispositivos USB que no funcionan correctamente, problemas de arranque, o problemas al usar máquinas virtuales con paso directo (passthrough) de hardware.</p>
+        
+        <h3>¿Qué hace el controlador IOMMU?</h3>
+        <p>Algunos dispositivos PCI solo pueden manejar direcciones de 32 bits a través del acceso DMA (es un asunto heredado). Por lo tanto, algunos dispositivos PCI solo pueden usar los primeros 4 GB de memoria, incluso en sistemas modernos de 64 bits.</p>
+        
+        <p>Cuando el rango direccionable de un dispositivo (a través de DMA) es limitado y no existe IOMMU, es posible que el dispositivo no pueda acceder a toda la memoria física. En este caso, se reserva una región de la memoria del sistema a la que el dispositivo puede dirigirse (dentro de los primeros 4 GB de memoria), y el dispositivo se programa para DMA en esta área reservada. Luego, el procesador copia el resultado en la memoria de destino que estaba más allá del "alcance" del dispositivo. Eso requiere muchos recursos del procesador. Este método se conoce como almacenamiento en búfer de rebote (también conocido como SWIOTLB o software IOMMU).</p>
+        
+        <p>Las IOMMU de hardware son dispositivos físicos que traducen (reasignan) las direcciones DMA del dispositivo (32 bits) a direcciones físicas de 64 bits para que los dispositivos puedan acceder a toda la memoria física sin la ayuda del procesador.</p>
+        
+        <h3>Soluciones para Problemas de IOMMU</h3>
+        
+        <h4>Solución 1: Deshabilitar IOMMU en BIOS</h4>
+        <p>Pros: Fácil. No se necesita configuración de Linux.<br>
+        Contras: Pérdida de rendimiento cuando se utilizan máquinas virtuales.</p>
+        
+        <h4>Solución 2: Parámetro del kernel (emulación de software)</h4>
+        <pre><code>iommu=soft</code></pre>
+        <p>o</p>
+        <pre><code>amd_iommu=off</code></pre>
+        <p>Esto es equivalente a la opción anterior. Le estamos diciendo al kernel que no use el hardware IOMMU, sino que lo emule a través del software. Es el modo predeterminado para los procesadores Intel.<br>
+        Pros: No es necesario deshabilitar IOMMU en BIOS. Es una opción adecuada si tiene arranque dual y el otro sistema operativo necesita IOMMU habilitado.<br>
+        Contras: Pérdida de funciones cuando se utilizan máquinas virtuales.</p>
+        
+        <h4>Solución 3: Forzar activación de IOMMU con traducción passthrough</h4>
+        <pre><code>amd_iommu=force_enable iommu=pt</code></pre>
+        <p>amd_iommu=on no es compatible, pero amd_iommu=force_enable sí lo es. Parece que simplemente poner iommu=pt solo funciona.<br>
+        Pros: Funciona. No es una emulación de software. 100% acelerado por hardware. Passthrough habilitado.<br>
+        Contras: iommu=pt es incompatible con Secure Memory Encryption (cifrado de RAM presente en los procesadores Ryzen Pro).</p>
+        
+        <h4>Solución 4: Forzar activación de IOMMU sin passthrough</h4>
+        <pre><code>amd_iommu=force_enable</code></pre>
+        <p>Igual que la solución 3 pero sin passthrough.</p>
+        
+        <h4>Solución 5: Deshabilitar ATS (Address Translation Services)</h4>
+        <pre><code>pci=noats</code></pre>
+        <p>No probado ampliamente. Casi sin información disponible.</p>
+        
+        <h3>Aplicar la Solución Recomendada (Solución 3)</h3>
+        <p>La solución 3 es la que no penaliza las funciones de virtualización. Para aplicarla:</p>
+        
+        <ol>
+          <li>Edita <code>/etc/default/grub</code>:</li>
+          <pre><code>sudo nano /etc/default/grub</code></pre>
+          
+          <li>Agrega <code>amd_iommu=force_enable iommu=pt</code> al final de la línea GRUB_CMDLINE_LINUX_DEFAULT:</li>
+          <pre><code>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash amd_iommu=force_enable iommu=pt"</code></pre>
+          
+          <li>Actualiza GRUB:</li>
+          <pre><code>sudo update-grub</code></pre>
+          
+          <li>Reinicia y entra en la BIOS. Habilita:
+            <ul>
+              <li>IOMMU</li>
+              <li>SVM mode (soporte de virtualización) en Avanzado->Configuración de CPU->Modo SVM</li>
+            </ul>
+          </li>
+          
+          <li>Guarda la configuración y reinicia.</li>
+        </ol>
+        
+        <p>Después del reinicio, Ubuntu debería arrancar correctamente, los puertos USB traseros deberían funcionar y las máquinas virtuales podrían beneficiarse de un IOMMU operativo con la opción passthru. Esta opción permite que las máquinas virtuales usen directamente componentes de hardware del host (una segunda GPU, unidad NVME, Ethernet, WiFi, USB...).</p>
+      </section>
+      
+      <section id="cinnamon-restart">
+        <h2>Reiniciar Cinnamon cuando se cuelga</h2>
+        
+        <h3>Descripción del Problema</h3>
+        <p>El entorno de escritorio Cinnamon puede colgarse ocasionalmente, lo que resulta en una interfaz de usuario no receptiva o congelada.</p>
+        
+        <h3>Solución</h3>
+        <p>Para reiniciar Cinnamon desde la línea de comandos:</p>
+        <pre><code>export DISPLAY=:0; cinnamon & exit</code></pre>
+        
+        <h3>Instalar un Alias para Reiniciar Cinnamon</h3>
+        <p>Para facilitar el proceso, puedes instalar un alias en tu archivo <code>~/.bashrc</code>:</p>
+        <pre><code>echo "alias refrescar-cinnamon='export DISPLAY=:0; cinnamon & exit'" >> ~/.bashrc</code></pre>
+        
+        <p>Luego, solo tendrás que ejecutar <code>refrescar-cinnamon</code> desde cualquier terminal para reiniciar Cinnamon.</p>
+      </section>
+      
+      <section id="network-shares">
+        <h2>Crear Directorio Compartido NFS</h2>
+        
+        <h3>Descripción del Problema</h3>
+        <p>Compartir directorios en la red local puede ser complicado si no se configura correctamente. NFS (Network File System) es una solución eficiente para compartir directorios en redes Linux.</p>
+        
+        <h3>Configuración del Servidor NFS</h3>
+        <ol>
+          <li>Instala el servidor NFS:</li>
+          <pre><code>sudo apt install nfs-kernel-server</code></pre>
+          
+          <li>Configura los directorios a compartir editando <code>/etc/exports</code>:</li>
+          <pre><code>sudo nano /etc/exports</code></pre>
+          
+          <li>Agrega una línea para compartir tu directorio (ejemplo para red 192.168.0.x):</li>
+          <pre><code>/home/usuario/Shared 192.168.0.1/24(rw,no_subtree_check,async)</code></pre>
+          
+          <li>Exporta los directorios:</li>
+          <pre><code>sudo exportfs -arv</code></pre>
+          
+          <li>Habilita y arranca el servicio:</li>
+          <pre><code>sudo systemctl enable nfs-kernel-server
+sudo systemctl start nfs-kernel-server</code></pre>
+        </ol>
+        
+        <h3>Configuración del Cliente NFS</h3>
+        <ol>
+          <li>Instala los paquetes NFS:</li>
+          <pre><code>sudo apt install nfs-common</code></pre>
+          
+          <li>Crea un punto de montaje:</li>
+          <pre><code>sudo mkdir -p /Shared</code></pre>
+          
+          <li>Verifica que el servidor NFS esté compartiendo directorios:</li>
+          <pre><code>showmount -e 192.168.0.xxx</code></pre>
+          
+          <li>Monta el directorio remoto:</li>
+          <pre><code>sudo mount 192.168.0.xxx:/home/usuario/Shared /Shared</code></pre>
+        </ol>
+        
+        <h3>Montaje Permanente</h3>
+        <ol>
+          <li>Edita <code>/etc/fstab</code>:</li>
+          <pre><code>sudo nano /etc/fstab</code></pre>
+          
+          <li>Agrega una línea para el montaje automático:</li>
+          <pre><code>192.168.0.xxx:/home/usuario/Shared /Shared nfs rw,async 0 0</code></pre>
+          
+          <li>Prueba la configuración:</li>
+          <pre><code>mount -a</code></pre>
+        </ol>
+      </section>
+      
+      <section id="mount-issues">
+        <h2>Montar Unidades de Red (SMB/CIFS)</h2>
+        
+        <h3>Descripción del Problema</h3>
+        <p>Montar unidades de red compartidas desde Windows u otros sistemas SMB puede ser complicado si no se configura correctamente.</p>
+        
+        <h3>Solución Manual</h3>
+        <p>Para montar una unidad de red temporalmente:</p>
+        <pre><code>sudo mount -t cifs //SERVIDOR/COMPARTIDO /punto/montaje -o username=USUARIO,password=CONTRASEÑA</code></pre>
+        
+        <h3>Usando Archivo de Credenciales (Recomendado)</h3>
+        <p>Para mayor seguridad, crea un archivo de credenciales:</p>
+        <pre><code>sudo nano ~/.smbcreds</code></pre>
+        
+        <p>Contenido del archivo:</p>
+        <pre><code>username=USUARIO
+password=CONTRASEÑA
+domain=DOMINIO</code></pre>
+        
+        <p>Establece permisos seguros:</p>
+        <pre><code>chmod 600 ~/.smbcreds</code></pre>
+        
+        <p>Monta usando el archivo de credenciales:</p>
+        <pre><code>sudo mount -t cifs //SERVIDOR/COMPARTIDO /punto/montaje -o credentials=/home/usuario/.smbcreds,uid=usuario,gid=usuario</code></pre>
+        
+        <h3>Montaje Permanente en /etc/fstab</h3>
+        <p>Para montar automáticamente al arrancar:</p>
+        <pre><code>//SERVIDOR/COMPARTIDO /punto/montaje cifs credentials=/home/usuario/.smbcreds,uid=usuario,gid=usuario,file_mode=0777,dir_mode=0777,iocharset=utf8,vers=3.0 0 0</code></pre>
+      </section>
+      
+      <section id="desktop-shortcuts">
+        <h2>Crear Accesos Directos en el Menú Inicio</h2>
+        
+        <h3>Descripción del Problema</h3>
+        <p>Es común necesitar crear accesos directos personalizados para aplicaciones o scripts en el menú de inicio del escritorio.</p>
+        
+        <h3>Solución</h3>
+        <p>Los accesos directos se guardan con extensión <code>.desktop</code> en:</p>
+        <ul>
+          <li>Para un usuario específico: <code>~/.local/share/applications</code></li>
+          <li>Para todo el sistema: <code>/usr/share/applications</code></li>
+        </ul>
+        
+        <h3>Ejemplo de Acceso Directo</h3>
+        <p>Crea un archivo <code>nombre_app.desktop</code> con el siguiente contenido:</p>
+        <pre><code>#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Nombre de la Aplicación
+Name[es_ES]=Nombre de la Aplicación
+Comment=Descripción de la aplicación
+Icon=/ruta/a/icono.png
+Exec=comando a ejecutar
+Path=/ruta/para/ejecutar
+Type=Application
+Terminal=false
+Actions=
+StartupNotify=false
+Categories=Application;</code></pre>
+        
+        <h3>Consideraciones Importantes</h3>
+        <ol>
+          <li>Después de crear y editar el archivo <code>.desktop</code>, ejecútalo (doble clic) y responde a la pregunta como "CONFIABLE".</li>
+          <li>Todos los directorios y accesos que contengan espacios en sus nombres deberán escribirse entre comillas dobles.</li>
+        </ol>
+        
+        <h3>Ejemplo Concreto</h3>
+        <p>Acceso directo para un script de backup:</p>
+        <pre><code>#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Backup Script
+Name[es_ES]=Script de Backup
+Comment=Realiza backup de documentos importantes
+Icon=/usr/share/icons/backup-icon.png
+Exec=/home/usuario/scripts/backup.sh
+Path=/home/usuario/scripts/
+Type=Application
+Terminal=true
+Actions=
+StartupNotify=false
+Categories=Utility;</code></pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

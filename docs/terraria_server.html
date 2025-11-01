@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servidor Terraria en Orange Pi - Documentación Linux</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Documentación Linux</div>
+      <nav class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="basic_setup.html">Básico</a>
+        <a href="advanced_config.html">Avanzado</a>
+        <a href="troubleshooting.html">Solución de Problemas</a>
+        <a href="terraria_server.html">Servidor Terraria</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Secciones</h3>
+      <ul>
+        <li><a href="#introduccion">Introducción</a></li>
+        <li><a href="#instalacion">Instalación del Servidor</a></li>
+        <li><a href="#configuracion">Configuración del Servidor</a></li>
+        <li><a href="#comandos">Comandos de Servidor</a></li>
+        <li><a href="#ubicaciones">Ubicaciones de Archivos</a></li>
+        <li><a href="#transferencia">Transferencia de Mundos</a></li>
+        <li><a href="#recursos">Recursos Adicionales</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Configuración de Servidor Terraria en Orange Pi</h1>
+      
+      <section id="introduccion">
+        <h2>Introducción</h2>
+        <p>Esta guía detalla cómo configurar un servidor de Terraria con TShock en una Orange Pi. TShock es una capa de seguridad y administración para servidores de Terraria que permite controlar usuarios, proteger mundos y gestionar comandos.</p>
+        
+        <p>Orange Pi es una placa de desarrollo similar a Raspberry Pi, basada en ARM, que puede utilizarse eficientemente para alojar servidores ligeros como Terraria.</p>
+      </section>
+      
+      <section id="instalacion">
+        <h2>Instalación del Servidor</h2>
+        
+        <h3>1. Crear un Nuevo Usuario y Darle Privilegios</h3>
+        <p>Es recomendable crear un usuario dedicado para el servidor de Terraria para mantener la seguridad del sistema:</p>
+        <pre><code>sudo adduser terraria</code></pre>
+        
+        <p>Edita el archivo sudoers para otorgar privilegios al nuevo usuario:</p>
+        <pre><code>sudo visudo</code></pre>
+        
+        <p>Al final del archivo, añade:</p>
+        <pre><code># Super Usuarios
+root    ALL=(ALL:ALL) ALL
+terraria    ALL=(ALL:ALL) ALL</code></pre>
+        
+        <h3>2. Instalar Programas Necesarios</h3>
+        <p>Instala Mono (entorno para ejecutar aplicaciones .NET), Screen (para mantener el servidor en ejecución) y herramientas de compresión:</p>
+        <pre><code>sudo apt-get install mono-complete screen zip unzip</code></pre>
+        
+        <h3>3. Cambiar al Nuevo Usuario</h3>
+        <pre><code>su terraria</code></pre>
+        
+        <h3>4. Navegar al Directorio Home</h3>
+        <pre><code>cd ~</code></pre>
+        
+        <h3>5. Descargar la Última Versión de TShock</h3>
+        <p>Descarga la última versión de TShock desde su repositorio oficial. Visita <a href="https://github.com/Pryaxis/TShock/releases/">https://github.com/Pryaxis/TShock/releases/</a> para obtener el enlace más reciente.</p>
+        
+        <p>Por ejemplo:</p>
+        <pre><code>wget https://github.com/Pryaxis/TShock/releases/download/v4.3.26/tshock_4.3.26.zip</code></pre>
+        
+        <h3>6. Descomprimir el Archivo</h3>
+        <p>Extrae el contenido del archivo ZIP a un nuevo directorio:</p>
+        <pre><code>unzip tshock_4.3.26.zip -d ./server</code></pre>
+        
+        <h3>7. Iniciar por Primera Vez el Servidor</h3>
+        <p>Navega al directorio del servidor y ejecútalo por primera vez:</p>
+        <pre><code>cd server</code></pre>
+        <pre><code>mono-sgen TerrariaServer.exe</code></pre>
+        
+        <p>Sigue las instrucciones en pantalla para crear un nuevo mundo:</p>
+        <ol>
+          <li>Selecciona la opción para crear un nuevo mundo</li>
+          <li>Indica el tamaño del mundo</li>
+          <li>Establece el nombre del mundo</li>
+          <li>Configura las opciones que desees</li>
+        </ol>
+        
+        <p>Después de crear y cargar el mundo por primera vez, cierra el servidor con el comando:</p>
+        <pre><code>exit</code></pre>
+      </section>
+      
+      <section id="configuracion">
+        <h2>Configuración del Servidor</h2>
+        
+        <h3>8. Crear un Script de Inicio</h3>
+        <p>Crea un archivo ejecutable para iniciar el servidor fácilmente:</p>
+        <pre><code>touch Iniciar_Server.sh && chmod +x Iniciar_Server.sh</code></pre>
+        
+        <h3>9. Editar el Script de Inicio</h3>
+        <p>Abre el archivo para editar las instrucciones de arranque:</p>
+        <pre><code>nano Iniciar_Server.sh</code></pre>
+        
+        <p>Añade el siguiente contenido (ajusta la ruta al mundo según tu configuración):</p>
+        <pre><code>#!/bin/bash
+screen -S terraria -A -m \
+    mono-sgen TerrariaServer.exe \
+    -world "/home/terraria/server/worlds/mundo1.wld" \
+    -port 7777 \
+    -maxplayers 8</code></pre>
+        
+        <h3>10. Iniciar el Servidor</h3>
+        <p>Ejecuta el script para iniciar el servidor:</p>
+        <pre><code>./Iniciar_Server.sh</code></pre>
+      </section>
+      
+      <section id="comandos">
+        <h2>Comandos de Servidor Comunes</h2>
+        <p>Los siguientes comandos pueden usarse una vez que estés conectado al servidor como administrador:</p>
+        
+        <ul>
+          <li><code>/maxplayers [número]</code> - Establece el máximo de jugadores permitidos (ej. <code>/maxplayers 8</code>)</li>
+          <li><code>/port [puerto]</code> - Cambia el puerto del servidor (ej. <code>/port 7778</code>)</li>
+          <li><code>/exit</code> - Cierra el servidor de forma segura</li>
+          <li><code>/save</code> - Guarda el mundo actual</li>
+          <li><code>/kick [jugador]</code> - Expulsa a un jugador</li>
+          <li><code>/ban [jugador]</code> - Banea a un jugador</li>
+          <li><code>/password [contraseña]</code> - Establece una contraseña para el servidor</li>
+        </ul>
+        
+        <h3>Comandos de GNU Screen</h3>
+        <p>Para interactuar con el servidor en ejecución:</p>
+        <ul>
+          <li><code>screen -r terraria</code> - Conectarse a la sesión del servidor</li>
+          <li><code>Ctrl+A, D</code> - Desconectarse de la sesión (el servidor sigue ejecutándose)</li>
+          <li><code>screen -list</code> - Ver sesiones de screen activas</li>
+        </ul>
+      </section>
+      
+      <section id="ubicaciones">
+        <h2>Ubicaciones de Archivos Importantes</h2>
+        
+        <h3>Ubicaciones de Mundos por Sistema Operativo</h3>
+        <ul>
+          <li><strong>Windows:</strong> <code>C:\Users\[nombre_usuario]\Documents\My Games\Terraria\Worlds</code></li>
+          <li><strong>Steam (por defecto):</strong> <code>C:\Program Files (x86)\Steam\userdata\[ID]\105600\remote\worlds</code></li>
+          <li><strong>Mac:</strong> <code>~/Library/Application Support/Terraria/Worlds</code></li>
+          <li><strong>Linux (nuestra configuración):</strong> <code>~/server/worlds</code> (relativo al directorio del usuario terraria)</li>
+        </ul>
+        
+        <h3>Otros Archivos Importantes</h3>
+        <ul>
+          <li><strong>Configuración de TShock:</strong> <code>~/server/config.json</code></li>
+          <li><strong>Registros del servidor:</strong> <code>~/server/tshock.log</code></li>
+          <li><strong>Usuarios administradores:</strong> <code>~/server/tshock.sqlite</code> (base de datos)</li>
+        </ul>
+      </section>
+      
+      <section id="transferencia">
+        <h2>Transferencia de Mundos</h2>
+        
+        <h3>Copiar Mundo desde Windows a Linux usando PSCP</h3>
+        <p>Si tienes un mundo creado en Windows y quieres usarlo en tu servidor Linux:</p>
+        
+        <ol>
+          <li>Descarga PSCP.exe desde <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html">PuTTY</a> (disponible en versiones de 32 y 64 bits)</li>
+          <li>Copia pscp.exe a <code>C:\Windows\system32\</code> para tenerlo disponible en cualquier directorio</li>
+          <li>Abre PowerShell o símbolo de sistema</li>
+          <li>Ejecuta el siguiente comando (ajustando la IP de tu Orange Pi y rutas según tu configuración):</li>
+        </ol>
+        
+        <pre><code>pscp "C:\ruta\al\mundo\Tu_Mapa.wld" terraria@192.168.0.xxx:/home/terraria/server/worlds/</code></pre>
+        
+        <h3>Transferencia en la Dirección Contraria</h3>
+        <p>Para descargar un mundo desde tu Orange Pi a Windows:</p>
+        <pre><code>pscp terraria@192.168.0.xxx:/home/terraria/server/worlds/Tu_Mapa.wld "C:\ruta\de\destino\"</code></pre>
+        
+        <h3>Alternativa: Transferencia con SCP/SFTP</h3>
+        <p>Desde Linux, puedes usar SCP para transferencias:</p>
+        <pre><code>scp /ruta/al/mundo.wld usuario@direccion_ip:/ruta/destino/</code></pre>
+      </section>
+      
+      <section id="recursos">
+        <h2>Recursos Adicionales</h2>
+        <ul>
+          <li><a href="https://tshock.readme.io/v4.3.22/docs/config-settings">Manual de Configuración de TShock</a></li>
+          <li><a href="https://tshock.co/xf/index.php?threads/guide-how-to-host-tshock-on-linux.4798/">Guía Oficial de TShock para Linux</a></li>
+          <li><a href="https://www.gnu.org/software/screen/manual/">Documentación de GNU Screen</a></li>
+          <li><a href="https://terraria.fandom.com/wiki/Server">Documentación Oficial de Servidores de Terraria</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Configurations - Linux Documentation</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Linux Documentation</div>
+      <nav class="nav-links">
+        <a href="index_en.html">Home</a>
+        <a href="basic_setup_en.html">Basic</a>
+        <a href="advanced_config_en.html">Advanced</a>
+        <a href="troubleshooting_en.html">Troubleshooting</a>
+        <a href="terraria_server_en.html">Terraria Server</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Sections</h3>
+      <ul>
+        <li><a href="#performance-tips">Performance Tips</a></li>
+        <li><a href="#swap-configuration">Swap Configuration</a></li>
+        <li><a href="#grub-repair">Repair GRUB</a>
+          <ul>
+            <li><a href="#grub-repair">Boot Repair</a></li>
+            <li><a href="#grub-repair">Manual Method</a></li>
+          </ul>
+        </li>
+        <li><a href="#hibernation">Enable Hibernation</a></li>
+        <li><a href="#kernel-upgrades">Update Kernel</a></li>
+        <li><a href="#system-optimization">System Optimization</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Advanced Configurations</h1>
+      
+      <section id="performance-tips">
+        <h2>Performance Tips</h2>
+        
+        <h3>Mount Temporary Folders in RAM</h3>
+        <p>If you have 8GB or more of RAM, you can improve performance and extend SSD life by mounting temporary folders in RAM:</p>
+        
+        <p>Edit the <code>/etc/fstab</code> file:</p>
+        <pre><code>sudo nano /etc/fstab</code></pre>
+        
+        <p>Add these lines:</p>
+        <pre><code>tmpfs    /tmp    tmpfs    noatime,nodiratime,nodev,nosuid,mode=1777,defaults    0    0
+tmpfs    /var/tmp    tmpfs    noatime,nodiratime,nodev,nosuid,mode=1777,defaults    0    0</code></pre>
+        
+        <p>If you frequently use lots of RAM (e.g., with virtual machines), you can limit the size:</p>
+        <pre><code>tmpfs    /tmp    tmpfs    noatime,nodiratime,nodev,nosuid,mode=1777,size=2G    0    0</code></pre>
+        
+        <h3>TRIM for SSD Drives</h3>
+        <p>TRIM allows the SSD to efficiently manage empty space blocks. You can schedule TRIM to run weekly:</p>
+        
+        <p>Create a file for the weekly task:</p>
+        <pre><code>sudo nano /etc/cron.weekly/fstrim</code></pre>
+        
+        <p>Add the following content:</p>
+        <pre><code>#!/bin/sh
+# Command to execute TRIM on all supported disks
+/sbin/fstrim --all || true</code></pre>
+        
+        <p>Give execution permissions:</p>
+        <pre><code>sudo chmod +x /etc/cron.weekly/fstrim</code></pre>
+      </section>
+      
+      <section id="swap-configuration">
+        <h2>Swap File Configuration</h2>
+        <p>The swap file is crucial for system performance, especially if you plan to use hibernation. Here's how to change its size:</p>
+        
+        <pre><code># Change swap file size
+cd /
+sudo swapoff -a
+sudo dd if=/dev/zero of=/swapfile bs=1M count=18432  # Size: 18GB
+sudo mkswap /swapfile
+sudo swapon /swapfile
+cat /proc/meminfo | grep Swap</code></pre>
+        
+        <p>To make it permanent, ensure the file is in <code>/etc/fstab</code>:</p>
+        <pre><code>/swapfile none swap sw 0 0</code></pre>
+      </section>
+      
+      <section id="grub-repair">
+        <h2>Repair GRUB</h2>
+        <p>If you have boot issues after installing another OS or due to a bootloader error, you can use Boot Repair. This tool provides a graphical interface that can automatically resolve many common boot problems.</p>
+        
+        <h3>Installation and Use of Boot Repair</h3>
+        <pre><code>sudo add-apt-repository ppa:yannubuntu/boot-repair
+sudo apt-get update
+sudo apt-get install -y boot-repair
+boot-repair</code></pre>
+        
+        <h3>Alternative Options for GRUB Repair</h3>
+        <p>If you prefer manual methods or Boot Repair is not available:</p>
+        
+        <ol>
+          <li>Boot with a Linux Live USB or CD</li>
+          <li>Open a terminal and determine your root partition of your installation:</li>
+          <pre><code>sudo fdisk -l</code></pre>
+          
+          <li>Create a temporary mount point and mount the root partition:</li>
+          <pre><code>sudo mount /dev/sdXY /mnt</code></pre>
+          <p>(Replace sdXY with your actual root partition)</p>
+          
+          <li>Mount other necessary filesystems:</li>
+          <pre><code>sudo mount --bind /dev /mnt/dev
+sudo mount --bind /proc /mnt/proc
+sudo mount --bind /sys /mnt/sys</code></pre>
+          
+          <li>Enter the system as root:</li>
+          <pre><code>sudo chroot /mnt</code></pre>
+          
+          <li>Reinstall GRUB:</li>
+          <pre><code>update-grub
+grub-install /dev/sdX</code></pre>
+          <p>(Replace sdX with your main disk)</p>
+          
+          <li>Exit the chroot environment and unmount filesystems:</li>
+          <pre><code>exit
+sudo umount /mnt/dev
+sudo umount /mnt/proc
+sudo umount /mnt/sys
+sudo umount /mnt</code></pre>
+          
+          <li>Reboot your system</li>
+        </ol>
+      </section>
+      
+      <section id="hibernation">
+        <h2>Enable Hibernation</h2>
+        <p>Hibernation saves the current system state to disk and completely powers off the computer. It requires special configuration:</p>
+        
+        <h3>Requirements</h3>
+        <ul>
+          <li>Disable Secure Boot in BIOS</li>
+          <li>Have enough disk space (equivalent to RAM)</li>
+        </ul>
+        
+        <h3>Procedure</h3>
+        <p>1. Check how much RAM you have:</p>
+        <pre><code>free</code></pre>
+        
+        <p>2. Disable current swap:</p>
+        <pre><code>sudo swapoff -a</code></pre>
+        
+        <p>3. Create a swap file with the size of your RAM (example: 16GB):</p>
+        <pre><code>sudo fallocate -l 16g /swapfile</code></pre>
+        
+        <p>4. Set permissions and activate swap:</p>
+        <pre><code>sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile</code></pre>
+        
+        <p>5. Ensure it's in <code>/etc/fstab</code>:</p>
+        <pre><code>echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab</code></pre>
+        
+        <p>6. Install and configure uswsusp:</p>
+        <pre><code>sudo apt install uswsusp
+sudo dpkg-reconfigure -pmedium uswsusp</code></pre>
+        
+        <p>7. Update boot system:</p>
+        <pre><code>sudo update-initramfs -u</code></pre>
+        
+        <p>8. For Ubuntu/Linux Mint-based distributions, edit GRUB:</p>
+        <pre><code>sudo nano /etc/default/grub</code></pre>
+        
+        <p>Add your swap partition UUID before closing quotes in the GRUB_CMDLINE_LINUX_DEFAULT line:</p>
+        <pre><code>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash resume=UUID=YOUR_SWAP_PARTITION_UUID"</code></pre>
+        
+        <p>9. Update GRUB:</p>
+        <pre><code>sudo update-grub</code></pre>
+        
+        <p>10. Edit the hibernation service:</p>
+        <pre><code>sudo systemctl edit systemd-hibernate.service</code></pre>
+        
+        <p>Paste this content:</p>
+        <pre><code>[Service]
+ExecStart=
+ExecStart=/usr/sbin/s2disk 
+ExecStartPost=/bin/run-parts -a post /lib/systemd/system-sleep</code></pre>
+        
+        <p>11. Create hibernation permissions file:</p>
+        <pre><code>sudo nano /etc/polkit-1/localauthority/50-local.d/com.ubuntu.enable-hibernate.pkla</code></pre>
+        
+        <p>Add this content:</p>
+        <pre><code>[Re-enable hibernate by default in upower]
+Identity=unix-user:*
+Action=org.freedesktop.upower.hibernate
+ResultActive=yes
+ 
+[Re-enable hibernate by default in logind]
+Identity=unix-user:*
+Action=org.freedesktop.login1.hibernate;org.freedesktop.login1.hibernate-multiple-sessions
+ResultActive=yes</code></pre>
+        
+        <p>12. Reboot the system to apply all changes.</p>
+      </section>
+      
+      <section id="kernel-upgrades">
+        <h2>Update Kernel</h2>
+        <p>Updating to newer kernel versions can fix hardware issues or provide new features:</p>
+        
+        <p>Example of how to install kernel 5.16.11:</p>
+        <pre><code>wget -c https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.16.11/amd64/linux-headers-5.16.11-051611_5.16.11-051611.202202230823_all.deb
+wget -c https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.16.11/amd64/linux-headers-5.16.11-051611-generic_5.16.11-051611.202202230823_amd64.deb
+wget -c https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.16.11/amd64/linux-image-unsigned-5.16.11-051611-generic_5.16.11-051611.202202230823_amd64.deb
+wget -c https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.16.11/amd64/linux-modules-5.16.11-051611-generic_5.16.11-051611.202202230823_amd64.deb
+
+sudo dpkg -i linux-headers-5.16.11*.deb linux-modules-5.16.11*.deb linux-image-unsigned-5.16.11-*.deb</code></pre>
+        
+        <h3>Use Debian SID Repository (CAUTION!)</h3>
+        <p>To access newer software versions, you can add the unstable Debian (SID) repository. Use with caution!</p>
+        
+        <pre><code>sudo apt update
+sudo apt install -y software-properties-common debian-archive-keyring dirmngr
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
+sudo add-apt-repository "deb http://ftp.de.debian.org/debian sid main"</code></pre>
+        
+        <p>NOTE: Disable this repository before updating the system to avoid instability.</p>
+      </section>
+      
+      <section id="system-optimization">
+        <h2>Other Optimization Tips</h2>
+        
+        <h3>SSD Optimization</h3>
+        <p>Besides TRIM mentioned earlier, consider:</p>
+        <ul>
+          <li>Mounting temporary folders in RAM</li>
+          <li>Reducing SSD writes with journaling adjustments</li>
+          <li>Using the appropriate I/O scheduler (deadline or noop for SSD)</li>
+        </ul>
+        
+        <h3>USB Device Permissions</h3>
+        <p>To access USB devices like ttyUSB0 without being root:</p>
+        <pre><code>sudo usermod -a -G tty $USER
+sudo usermod -a -G dialout $USER</code></pre>
+        
+        <p>Reboot the system to apply changes.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basic Linux Setup - Linux Documentation</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Linux Documentation</div>
+      <nav class="nav-links">
+        <a href="index_en.html">Home</a>
+        <a href="basic_setup_en.html">Basic</a>
+        <a href="advanced_config_en.html">Advanced</a>
+        <a href="troubleshooting_en.html">Troubleshooting</a>
+        <a href="terraria_server_en.html">Terraria Server</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Sections</h3>
+      <ul>
+        <li><a href="#first-steps">First Steps in Linux Mint</a></li>
+        <li><a href="#grub-customization">Customize GRUB</a></li>
+        <li><a href="#remote-desktop">Remote Desktop</a></li>
+        <li><a href="#arduino-setup">Configure Arduino IDE</a></li>
+        <li><a href="#pyqt5-setup">Install PyQt5</a></li>
+        <li><a href="#ntfs-support">NTFS Support</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Basic Linux Setup</h1>
+      
+      <section id="first-steps">
+        <h2>First Steps in Linux Mint</h2>
+        <p>This section covers basic configurations recommended to perform immediately after installing Linux Mint to customize your environment and improve functionality.</p>
+        
+        <h3>Customize GRUB</h3>
+        <p>GRUB bootloader can be customized to improve boot experience:</p>
+        <pre><code>sudo add-apt-repository ppa:danielrichter2007/grub-customizer
+sudo apt update
+sudo apt install grub-customizer</code></pre>
+        
+      </section>
+      
+      <section id="grub-customization">
+        <h2>Customize GRUB</h2>
+        <p>Use GRUB Customizer for a user-friendly graphical interface to customize the boot menu:</p>
+        <pre><code>sudo add-apt-repository ppa:danielrichter2007/grub-customizer
+sudo apt update
+sudo apt install grub-customizer</code></pre>
+      </section>
+      
+      <section id="remote-desktop">
+        <h2>Configure Remote Desktop</h2>
+        <p>To access your system remotely, install and configure XRDP:</p>
+        <pre><code>sudo apt install xrdp
+sudo systemctl enable xrdp
+sudo service xrdp start</code></pre>
+        
+        <p>To improve X11 compatibility (optional):</p>
+        <pre><code>wget https://raw.githubusercontent.com/scarygliders/X11RDP-o-Matic/master/X11rdp-o-matic.sh
+sudo chmod +x X11rdp-o-matic.sh
+sudo ./X11rdp-o-matic.sh</code></pre>
+      </section>
+      
+      <section id="arduino-setup">
+        <h2>Set Up Arduino IDE</h2>
+        <p>To allow the user to use Arduino IDE without permission issues:</p>
+        <pre><code>sudo usermod -a -G dialout $USER</code></pre>
+        
+        <p>For Digispark devices, create the udev rules:</p>
+        <pre><code>sudo nano /etc/udev/rules.d/49-micronucleus.rules</code></pre>
+        
+        <p>Add the following content to the file:</p>
+        <pre><code># UDEV Rules for Micronucleus boards including the Digispark.
+# This file must be placed at:
+#
+# /etc/udev/rules.d/49-micronucleus.rules    (preferred location)
+#   or
+# /lib/udev/rules.d/49-micronucleus.rules    (req'd on some broken systems)
+#
+# After this file is copied, physically unplug and reconnect the board.
+#
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE:="0666"
+KERNEL=="ttyACM*", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+#
+# If you share your linux system with other users, or just don't like the
+# idea of write permission for everybody, you can replace MODE:="0666" with
+# OWNER:="username" to create the device owned by you, or with
+# GROUP:="groupname" and mange access using standard unix groups.</code></pre>
+        
+        <p>Reload the rules:</p>
+        <pre><code>sudo udevadm control --reload-rules</code></pre>
+      </section>
+      
+      <section id="pyqt5-setup">
+        <h2>Install PyQt5</h2>
+        <p>For GUI development in Python:</p>
+        <pre><code>sudo apt install pyqt5-dev-tools pyqt5-examples python3-pyqt5 python3-qtpy</code></pre>
+      </section>
+      
+      <section id="ntfs-support">
+        <h2>NTFS Partition Support</h2>
+        <p>Install necessary packages for full NTFS support:</p>
+        <pre><code>sudo apt install ntfs-3g ntfs-config</code></pre>
+        
+        <p>To mount NTFS partitions in the <code>/etc/fstab</code> file:</p>
+        <pre><code>#UUID=UUID_OF_THE_PARTITION /mount_point ntfs-3g defaults,locale=en_US.UTF-8 0 0
+
+# Example:
+UUID=5CCC2306CC22DA52 /media/Storage ntfs-3g defaults,locale=en_US.UTF-8 0 0</code></pre>
+        
+        <h3>Common NTFS Partition Issues</h3>
+        <p>If you can't mount a Windows NTFS partition, it's likely due to Fast Startup in Windows 8/10. To fix this:</p>
+        <ol>
+          <li>Disable hibernation in Windows:
+            <pre><code>powercfg /h off</code></pre>
+          </li>
+          <li>Or disable "Fast Startup" in Windows power options</li>
+        </ol>
+        
+        <h3>Repair NTFS Partitions</h3>
+        <p>If an NTFS partition has errors:</p>
+        <pre><code>sudo ntfsfix /dev/sdXY</code></pre>
+        <p>Where <code>sdXY</code> is your device (for example, sda1).</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

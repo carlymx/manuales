@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Troubleshooting - Linux Documentation</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">Linux Documentation</div>
+      <nav class="nav-links">
+        <a href="index_en.html">Home</a>
+        <a href="basic_setup_en.html">Basic</a>
+        <a href="advanced_config_en.html">Advanced</a>
+        <a href="troubleshooting_en.html">Troubleshooting</a>
+        <a href="terraria_server_en.html">Terraria Server</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Sections</h3>
+      <ul>
+        <li><a href="#usb-issues">USB Issues</a></li>
+        <li><a href="#iommu-fixes">IOMMU Issues</a></li>
+        <li><a href="#cinnamon-restart">Restart Cinnamon</a></li>
+        <li><a href="#network-shares">Network Shares and NFS</a></li>
+        <li><a href="#mount-issues">Mount Issues</a></li>
+        <li><a href="#desktop-shortcuts">Desktop Shortcuts</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <h1>Common Linux Troubleshooting</h1>
+      
+      <section id="usb-issues">
+        <h2>USB Issues: USB2 or USB3, but not both simultaneously</h2>
+        
+        <h3>Problem Description</h3>
+        <p>In some systems, especially with older hardware or specific BIOS configurations, it may occur that USB2 ports work correctly or USB3 ports work correctly, but not both simultaneously. This issue can manifest as USB ports that stop responding or devices that are not recognized properly.</p>
+        
+        <h3>Possible Causes</h3>
+        <ul>
+          <li>Issues with USB driver in the kernel</li>
+          <li>Incorrect USB power configuration in BIOS</li>
+          <li>Driver or resource conflicts</li>
+          <li>USB hardware with compatibility issues</li>
+        </ul>
+        
+        <h3>Solution</h3>
+        <p>Rather than a general procedure, the solution depends on specific hardware and distribution. It is recommended:</p>
+        <ol>
+          <li>Check for kernel and driver updates</li>
+          <li>Update BIOS to the latest available firmware</li>
+          <li>Test different USB ports and devices</li>
+          <li>Check system logs: <code>dmesg | grep -i usb</code></li>
+        </ol>
+      </section>
+      
+      <section id="iommu-fixes">
+        <h2>IOMMU Issues in AMD Ryzen Processors</h2>
+        
+        <h3>Problem Description</h3>
+        <p>IOMMU (Input-Output Memory Management Unit) issues in AMD Ryzen processors can manifest as USB devices not working correctly, boot problems, or issues when using virtual machines with hardware passthrough.</p>
+        
+        <h3>What does the IOMMU controller do?</h3>
+        <p>Some PCI devices can only handle 32-bit addresses through DMA access (it's a legacy issue). So some PCI devices can only use the first 4GB of memory, even on modern 64-bit systems.</p>
+        
+        <p>When the addressable range of a device (through DMA) is limited and no IOMMU exists, the device might not be able to reach all of physical memory. In this case a region of system memory that the device can address is reserved (within the first 4GB of memory), and the device is programmed to DMA to this reserved area. The processor then copies the result to the target memory that was beyond the "reach" of the device. That takes a lot of processor resources. This method is known as bounce buffering (also known as SWIOTLB or software IOMMU).</p>
+        
+        <p>Hardware IOMMUs are physical devices that translate (remaps) device DMA addresses (32-bit) to 64-bit physical addresses so devices could access all of physical memory without processor help.</p>
+        
+        <h3>Solutions for IOMMU Issues</h3>
+        
+        <h4>Solution 1: Disable IOMMU in BIOS</h4>
+        <p>Pros: Easy. No Linux setup needed.<br>
+        Cons: Loss of performance when Virtual Machines used.</p>
+        
+        <h4>Solution 2: Kernel parameter (software emulation)</h4>
+        <pre><code>iommu=soft</code></pre>
+        <p>or</p>
+        <pre><code>amd_iommu=off</code></pre>
+        <p>This is equivalent to the previous option. We are telling the kernel not to use the IOMMU hardware but instead emulate it through software. Is the default mode for Intel processors.<br>
+        Pros: You don't need to disable IOMMU in BIOS. Is one suitable option if you have dual boot and the other O.S. needs the IOMMU enabled.<br>
+        Cons: Loss of features when Virtual Machines used.</p>
+        
+        <h4>Solution 3: Force enable IOMMU with passthrough translation</h4>
+        <pre><code>amd_iommu=force_enable iommu=pt</code></pre>
+        <p>amd_iommu=on is not supported but amd_iommu=force_enable is. Looks like just putting iommu=pt alone works.<br>
+        Pros: Works. Not a software emulation. 100% hardware accelerated. Passthrough enabled.<br>
+        Cons: iommu=pt is incompatible with Secure Memory Encryption (RAM encryption present on Ryzen Pro processors).</p>
+        
+        <h4>Solution 4: Force enable IOMMU without passthrough</h4>
+        <pre><code>amd_iommu=force_enable</code></pre>
+        <p>Same as Solution 3 but without passthrough.</p>
+        
+        <h4>Solution 5: Disable ATS (Address Translation Services)</h4>
+        <pre><code>pci=noats</code></pre>
+        <p>Not widely tested. Almost no information available.</p>
+        
+        <h3>Apply Recommended Solution (Solution 3)</h3>
+        <p>Solution 3 is the one that doesn't penalize virtualization features. To apply it:</p>
+        
+        <ol>
+          <li>Edit <code>/etc/default/grub</code>:</li>
+          <pre><code>sudo nano /etc/default/grub</code></pre>
+          
+          <li>Add <code>amd_iommu=force_enable iommu=pt</code> at the end of the GRUB_CMDLINE_LINUX_DEFAULT line:</li>
+          <pre><code>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash amd_iommu=force_enable iommu=pt"</code></pre>
+          
+          <li>Update GRUB:</li>
+          <pre><code>sudo update-grub</code></pre>
+          
+          <li>Reboot and enter BIOS. Enable:
+            <ul>
+              <li>IOMMU</li>
+              <li>SVM mode (virtualization support) in Advanced->CPU configuration->SVM mode</li>
+            </ul>
+          </li>
+          
+          <li>Save settings and reboot.</li>
+        </ol>
+        
+        <p>After rebooting, Ubuntu will boot correctly, rear USB ports should work, and virtual machines will be able to benefit from an operating IOMMU with the passthru option. This option enables virtual machines to directly use hardware components from the host (a second GPU, NVME drive, Ethernet, WiFi, USB...).</p>
+      </section>
+      
+      <section id="cinnamon-restart">
+        <h2>Restart Cinnamon when it hangs</h2>
+        
+        <h3>Problem Description</h3>
+        <p>The Cinnamon desktop environment can occasionally hang, resulting in an unresponsive or frozen user interface.</p>
+        
+        <h3>Solution</h3>
+        <p>To restart Cinnamon from the command line:</p>
+        <pre><code>export DISPLAY=:0; cinnamon & exit</code></pre>
+        
+        <h3>Install an Alias to Restart Cinnamon</h3>
+        <p>To facilitate the process, you can install an alias in your <code>~/.bashrc</code> file:</p>
+        <pre><code>echo "alias refresh-cinnamon='export DISPLAY=:0; cinnamon & exit'" >> ~/.bashrc</code></pre>
+        
+        <p>Then, you'll just need to run <code>refresh-cinnamon</code> from any terminal to restart Cinnamon.</p>
+      </section>
+      
+      <section id="network-shares">
+        <h2>Create NFS Shared Directory</h2>
+        
+        <h3>Problem Description</h3>
+        <p>Sharing directories on the local network can be tricky if not configured correctly. NFS (Network File System) is an efficient solution for sharing directories in Linux networks.</p>
+        
+        <h3>NFS Server Configuration</h3>
+        <ol>
+          <li>Install the NFS server:</li>
+          <pre><code>sudo apt install nfs-kernel-server</code></pre>
+          
+          <li>Configure the directories to share by editing <code>/etc/exports</code>:</li>
+          <pre><code>sudo nano /etc/exports</code></pre>
+          
+          <li>Add a line to share your directory (example for 192.168.0.x network):</li>
+          <pre><code>/home/user/Shared 192.168.0.1/24(rw,no_subtree_check,async)</code></pre>
+          
+          <li>Export directories:</li>
+          <pre><code>sudo exportfs -arv</code></pre>
+          
+          <li>Enable and start the service:</li>
+          <pre><code>sudo systemctl enable nfs-kernel-server
+sudo systemctl start nfs-kernel-server</code></pre>
+        </ol>
+        
+        <h3>NFS Client Configuration</h3>
+        <ol>
+          <li>Install NFS packages:</li>
+          <pre><code>sudo apt install nfs-common</code></pre>
+          
+          <li>Create a mount point:</li>
+          <pre><code>sudo mkdir -p /Shared</code></pre>
+          
+          <li>Verify that the NFS server is sharing directories:</li>
+          <pre><code>showmount -e 192.168.0.xxx</code></pre>
+          
+          <li>Mount the remote directory:</li>
+          <pre><code>sudo mount 192.168.0.xxx:/home/user/Shared /Shared</code></pre>
+        </ol>
+        
+        <h3>Permanent Mount</h3>
+        <ol>
+          <li>Edit <code>/etc/fstab</code>:</li>
+          <pre><code>sudo nano /etc/fstab</code></pre>
+          
+          <li>Add a line for automatic mounting:</li>
+          <pre><code>192.168.0.xxx:/home/user/Shared /Shared nfs rw,async 0 0</code></pre>
+          
+          <li>Test the configuration:</li>
+          <pre><code>mount -a</code></pre>
+        </ol>
+      </section>
+      
+      <section id="mount-issues">
+        <h2>Mount Network Drives (SMB/CIFS)</h2>
+        
+        <h3>Problem Description</h3>
+        <p>Mounting shared network drives from Windows or other SMB systems can be tricky if not configured correctly.</p>
+        
+        <h3>Manual Solution</h3>
+        <p>To temporarily mount a network drive:</p>
+        <pre><code>sudo mount -t cifs //SERVER/SHARE /mount/point -o username=USERNAME,password=PASSWORD</code></pre>
+        
+        <h3>Using Credentials File (Recommended)</h3>
+        <p>For increased security, create a credentials file:</p>
+        <pre><code>sudo nano ~/.smbcreds</code></pre>
+        
+        <p>File content:</p>
+        <pre><code>username=USERNAME
+password=PASSWORD
+domain=DOMAIN</code></pre>
+        
+        <p>Set secure permissions:</p>
+        <pre><code>chmod 600 ~/.smbcreds</code></pre>
+        
+        <p>Mount using the credentials file:</p>
+        <pre><code>sudo mount -t cifs //SERVER/SHARE /mount/point -o credentials=/home/user/.smbcreds,uid=user,gid=user</code></pre>
+        
+        <h3>Permanent Mount in /etc/fstab</h3>
+        <p>To mount automatically at boot:</p>
+        <pre><code>//SERVER/SHARE /mount/point cifs credentials=/home/user/.smbcreds,uid=user,gid=user,file_mode=0777,dir_mode=0777,iocharset=utf8,vers=3.0 0 0</code></pre>
+      </section>
+      
+      <section id="desktop-shortcuts">
+        <h2>Create Start Menu Shortcuts</h2>
+        
+        <h3>Problem Description</h3>
+        <p>It's common to need to create custom shortcuts for applications or scripts in the start menu.</p>
+        
+        <h3>Solution</h3>
+        <p>Shortcuts are saved with <code>.desktop</code> extension in:</p>
+        <ul>
+          <li>For a specific user: <code>~/.local/share/applications</code></li>
+          <li>For the entire system: <code>/usr/share/applications</code></li>
+        </ul>
+        
+        <h3>Shortcut Example</h3>
+        <p>Create a <code>app_name.desktop</code> file with the following content:</p>
+        <pre><code>#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Application Name
+Name[en_US]=Application Name
+Comment=Description of the application
+Icon=/path/to/icon.png
+Exec=command to execute
+Path=/path/to/execute/from
+Type=Application
+Terminal=false
+Actions=
+StartupNotify=false
+Categories=Application;</code></pre>
+        
+        <h3>Important Considerations</h3>
+        <ol>
+          <li>After creating and editing the <code>.desktop</code> file, execute it (double-click) and respond to the question as "TRUSTED".</li>
+          <li>All directories and shortcuts that contain spaces in their names should be written in double quotes.</li>
+        </ol>
+        
+        <h3>Concrete Example</h3>
+        <p>Shortcut for a backup script:</p>
+        <pre><code>#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Backup Script
+Name[en_US]=Backup Script
+Comment=Performs backup of important documents
+Icon=/usr/share/icons/backup-icon.png
+Exec=/home/user/scripts/backup.sh
+Path=/home/user/scripts/
+Type=Application
+Terminal=true
+Actions=
+StartupNotify=false
+Categories=Utility;</code></pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+/* CSS for Linux Documentation */
+:root {
+  /* Light theme variables */
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --text-color: #333;
+  --bg-color: #f5f5f5;
+  --sidebar-color: #2c3e50;
+  --header-color: #ecf0f1;
+  --border-color: #ddd;
+  --main-content-bg: white;
+  --sidebar-text: #ecf0f1;
+  --code-bg: #2d2d2d;
+  --code-text: #f8f8f2;
+  --inline-code-bg: #f1f1f1;
+  --table-bg: #f9f9f9;
+  --selection-bg: #3498db;
+  --selection-text: white;
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --primary-color: #34495e;
+  --secondary-color: #2980b9;
+  --accent-color: #c0392b;
+  --text-color: #ecf0f1;
+  --bg-color: #2c3e50;
+  --sidebar-color: #34495e;
+  --header-color: #3d566e;
+  --border-color: #555;
+  --main-content-bg: #34495e;
+  --sidebar-text: #bdc3c7;
+  --code-bg: #1e1e1e;
+  --code-text: #dcdcdc;
+  --inline-code-bg: #555;
+  --table-bg: #3d566e;
+  --selection-bg: #3498db;
+  --selection-text: #ecf0f1;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Selection colors */
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+}
+
+pre ::selection {
+  background-color: #5a6470;
+  color: #ffffff;
+}
+
+/* Header styles */
+header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center; /* Align with theme toggle button */
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: background-color 0.3s;
+}
+
+.theme-toggle:hover {
+  background: #2980b9;
+}
+
+/* Language toggle button */
+.lang-toggle {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.lang-toggle:hover {
+  background: #2980b9;
+}
+
+/* Layout styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 90vh;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  background-color: var(--sidebar-color);
+  color: var(--sidebar-text);
+  padding: 1rem;
+  height: calc(100vh - 60px);
+  position: sticky;
+  top: 60px;
+  overflow-y: auto;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul ul {
+  padding-left: 1rem;
+  margin-top: 0.25rem;
+}
+
+.sidebar li {
+  margin-bottom: 0.25rem;
+}
+
+.sidebar a {
+  color: var(--sidebar-text);
+  text-decoration: none;
+  padding: 0.25rem 0;
+  display: block;
+  transition: all 0.2s;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+.sidebar a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #3498db;
+}
+
+.sidebar .active {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+/* Main content styles */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: var(--main-content-bg);
+  margin: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+}
+
+.main-content h1 {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  padding-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.main-content h2 {
+  color: var(--secondary-color);
+  margin-top: 2rem;
+}
+
+.main-content h3 {
+  color: #7f8c8d;
+}
+
+.main-content p {
+  margin-bottom: 1rem;
+}
+
+.main-content ul, .main-content ol {
+  padding-left: 1.5rem;
+}
+
+.main-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* Code block styles */
+pre {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-family: 'Courier New', Consolas, Monaco, monospace;
+  position: relative;
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+code {
+  font-family: 'Courier New', Consolas, Monaco, monospace;
+  background-color: var(--inline-code-bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid var(--border-color);
+}
+
+th {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: var(--table-bg);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .main-content {
+    margin: 1rem 0.5rem;
+    padding: 1rem;
+  }
+}
